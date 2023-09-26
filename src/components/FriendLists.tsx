@@ -36,17 +36,20 @@ export const users:{id:number,name:string,avatar:string,message:string}[] = [
     },
 ];
 
-export const FriendLists=()=> {
+interface PropsTypes {
+    setCurrentUserSelected: (u:any)=>void;
+}
+export const FriendLists=({setCurrentUserSelected}:PropsTypes)=> {
     return (
-        <div className={"bg-[#f1f9fd] w-3/12"}>
+        <div className={"bg-[#f1f9fd]  md:w-3/12 sm:w-3/12 overflow-y-scroll"}>
             <div className="flex items-center h-14 border-b-2">
                 <AiOutlineSearch size={30} className={"ml-2"} />
                 <input type="text" placeholder={"rechercher un ami"} className={" ml-1 h-full w-full bg-[#f1f9fd]"} style={{border:"none",outline:"none"}}/>
             </div>
-            <div className={'flex flex-col gap-2'}>
+            <div className={'flex flex-row  xl:flex-col md:flex-col gap-16 overflow-x-scroll  sm:flex-col '}>
                 {
                     users.map((user)=>(
-                        <div className={"flex items-center w-full border-b-2 border-blue-100 cursor-pointer hover:bg-blue-100"} key={user.name}>
+                        <div className={"flex items-center w-full border-b-2 border-blue-100 cursor-pointer hover:bg-blue-100"} key={user.name} onClick={()=>setCurrentUserSelected(user)}>
                             <Image src={user.avatar} alt={"avatar"} width={50} height={40} className={"rounded-full m-5"} />
                             <div className=" w-full">
                              <div className="flex items-center justify-between">
