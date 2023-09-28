@@ -4,11 +4,11 @@ import {SideMenu} from "@/components/SideMenu";
 import {FriendLists} from "@/components/FriendLists";
 import {Chat} from "@/components/Chat";
 import {FriendDetail} from "@/components/FriendDetail";
+import {useAuth} from "@/context/AuthContext";
 
 export  const Layouts = () => {
-    const [currentUserSelected, setCurrentUserSelected] = useState<any>(null);
     const [showMenu, setShowMenu] = useState(false);
-
+    const { remoteUser} = useAuth();
 
     useEffect(() => {
        setShowMenu(true);
@@ -35,8 +35,8 @@ export  const Layouts = () => {
         <div className="flex flex-col xl:flex-row md:flex-row sm:flex-row">
             <SideMenu showMenu={showMenu} setShowMenu={setShowMenu} />
             {/*<div className={"sm:border-slate-800-100 border-b-2 mt-4 mb-4"} />*/}
-            <FriendLists setCurrentUserSelected={setCurrentUserSelected}/>
-            {currentUserSelected && <Chat currentUserSelected={currentUserSelected} />}
+            <FriendLists />
+            {remoteUser && <Chat  />}
             {/*{currentUserSelected && <FriendDetail/>}*/}
 
         </div>
