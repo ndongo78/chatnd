@@ -17,29 +17,29 @@ interface Props {
 }
 export const Chat = () => {
     const [tokenFrom, setTokenFrom] = useState<string>("");
-    const {remoteUser,messages,setMessages,currentChat,currentUser,token,usersOnlines,handleSubmit,msg,setMsg}=useAuth()
+    const {remoteUser,messages,setMessages,currentChat,callUser,token,handleSubmit,msg,setMsg}=useAuth()
 
-    console.log("userOnline",usersOnlines)
 
     const router=useRouter()
 
 
     useEffect(() => {
       const token= localStorage.getItem("token")
-        console.log(token)
+
       if(token){
           setTokenFrom(token)
       }else {
           router.push("/")
       }
     }, [tokenFrom]);
-    console.log(currentChat)
+
 
     useEffect(() => {
         getMessages(currentChat?._id,token)
             .then(response => {
                 setMessages(response)
-                console.log("messages",response)})
+                //console.log("messages",response)
+            })
             .catch(error=>console.log('error message',error))
     }, [currentChat?._id, token]);
 
@@ -61,7 +61,7 @@ export const Chat = () => {
                     <div className={" rounded-full p-2 cursor-pointer iconsChat"} >
                         <FiPhone size={25} className={"opacity-50 bg-opacity-70"}  />
                     </div>
-                    <div className={" rounded-full p-2 cursor-pointer iconsChat"} >
+                    <div className={" rounded-full p-2 cursor-pointer iconsChat"} onClick={callUser} >
                     <BsCameraVideo size={25} className={"opacity-50 bg-opacity-70"}/>
                     </div>
                     <div className={"iconsChat rounded-full p-2 cursor-pointer"} >
@@ -71,7 +71,7 @@ export const Chat = () => {
             </div>
         </div>
        <div className="chat-messages flex flex-col justify-between">
-           {messages.map((message) =><Message key={message._id} message={message} />)}
+           {messages.map((message,index) =><Message key={index} message={message} />)}
            </div>
            <div className="chat-footer bg-blue-500 w-full absolute bottom-0">
                <div>

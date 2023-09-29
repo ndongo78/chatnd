@@ -2,6 +2,8 @@
 import {createContext, useContext, useEffect, useRef, useState} from "react";
 import { io } from 'socket.io-client';
 import {createMessages} from "@/utils";
+import Peer from 'peerjs';
+import {useRouter} from "next/navigation";
 
 export type User ={
     username:string,
@@ -35,6 +37,12 @@ const AuthContext=createContext<{
     handleSubmit:( )=> void
     msg: string
     setMsg: (t:string)=>void
+    socket: any
+    localMediaStream: any
+    callUser: ()=>void
+    myVideo: any
+    userCaller: any
+    answerCall: ()=>void
 }>({
     token: "",
     setToken: (token:string) => {},
@@ -50,7 +58,13 @@ const AuthContext=createContext<{
     setUsersOnlines:(t:any)=>{},
     handleSubmit:()=>{},
     msg:"",
-    setMsg:(t:string)=>{}
+    setMsg:(t:string)=>{},
+    socket: undefined,
+  localMediaStream: null,
+    callUser:()=>{},
+    myVideo: null,
+    userCaller: null,
+    answerCall:()=>{},
 });
 
 const SERVER:string | undefined |any =process.env.NEXT_PUBLIC_SERVER_URL
@@ -60,29 +74,87 @@ function AuthContextProvider({children}:any){
     const [remoteUser, setRemoteUser] = useState<User>();
     const [messages, setMessages] = useState<Message[]>([]);
     const [currentChat, setCurrentChat] = useState<{_id: string; room: [string, string];}>({_id: '', room: ["", ""] });
-    const [usersOnlines, setUsersOnlines] = useState([]);
+    const [usersOnlines, setUsersOnlines] = useState<any>([]);
     let socket=useRef<any>()
+    let peer=useRef<any>()
     const [msg, setMsg] = useState("");
+    const myVideo= useRef<any>(null)
+    const remoteVideo= useRef<any>(null)
+    const [localMediaStream, setLocalMediaStream] = useState<MediaStream | null >(null);
+   const router= useRouter()
+    const [userCaller, setUserCaller] = useState(null);
+
+
+    const getMediaStream=() => {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then((mediaStream) => {
+         // console.log("currentStream",mediaStream)
+          setLocalMediaStream(mediaStream);
+          // myVideo.current.srcObject = mediaStream;
+
+      }).catch(err => console.log("err: ", err));
+
+    }
 
     useEffect(() => {
         if (currentUser) {
+            // navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            //     .then((mediaStream) => {
+            //         // console.log("currentStream",mediaStream)
+            //         setLocalMediaStream(mediaStream);
+            //         // myVideo.current.srcObject = mediaStream;
+            //
+            //     }).catch(err => console.log("err: ", err));
+            const peerOptions = {
+                path: '/',
+                secure: true,
+                config: {
+                    iceServers: [
+                        {
+                            urls: [
+                                'stun:iceserver.ndongodev.com:3478',
+                                //"stun:stun.l.google.com:19302"
+                                // {
+                                //     urls: 'turn:iceserver.ndongodev.com:3478',
+                                //     username: 'ndongo',
+                                //     credential: 'a9125844',
+                                // },
+                            ],
+                        },
+                    ],
+                },
+            };
 
-
-            //peer.current = new Peer(peerOptions);
+            peer.current = new Peer(peerOptions);
 
             socket.current = io(SERVER);
 
+            peer.current.on('error', (err: Error) =>
+                console.log('Erreur du serveur Peer', err),
+            );
             socket.current.on("connection", (data: string) => {
-                console.log("socket",data);
+                //console.log("socket",data);
                 // peer.current.on('open', (peerId: string) => { ;
                 //     setsocketId(peerId);
                 //     dispatch(setCurrentUser({ ...user, socketId: data }));})
-                    socket.current.emit("register-new-user", { ...currentUser, socketId: data, peerId: "peerId" });
+                peer.current.on('open', (peerId: string) => {
+                    console.log("open", peerId)
+                    socket.current.emit("register-new-user", { ...currentUser, socketId: data, peerId: peerId });
+                })
+
 
             });
 
             socket.current.on('user-connected', (users: any) => {
-                  setUsersOnlines(users);
+                //console.log("user connected", users);
+                  // @ts-ignore
+                setUsersOnlines((prevState)=>[...prevState,users]);
+                socket.current.emit('user-connected',users);
+            });
+            socket.current.on("current-online-users", (initialOnlineUsers:any) => {
+                // Mettez à jour l'état usersOnlines avec la liste initiale
+                // console.log("initialOnlineUsers", initialOnlineUsers);
+                setUsersOnlines(initialOnlineUsers);
             });
 
             socket.current.on("messages", (data: any) => {
@@ -90,17 +162,41 @@ function AuthContextProvider({children}:any){
                 setMessages((prevState)=>[...prevState, data]);
             });
 
-            socket.current.on("disconnect", () => {
-                socket.current.on('getUsers', (users: any) => {
-
-                });
+            socket.current.on("updated-users", (updatedOnlineUsers:any) => {
+                // Mettez à jour l'état usersOnlines avec la liste mise à jour
+                setUsersOnlines(updatedOnlineUsers);
             });
 
             socket.current.on('callUser', (data: any) => {
-
+                // @ts-ignore
+                 setUserCaller(data.from);
+                router.push('/notification',data.from);
+                // console.log("callUser", data);
+                // alert("Vous avez un appel")
             });
+                peer.current.on("call",(call:any)=>{
+
+                  try {
+                    call.on("stream",(remoteStream: any)=>{
+                      //userVideo.current.srcObject=remoteStream
+                    })
+                  } catch (error) {
+                    console.log("call error", error);
+                   return alert("Error calling")
+                  }
+                  console.log("callEvent",call)
+                })
         }
     }, [currentUser]);
+
+
+
+
+
+    // console.log("usersOnlines", usersOnlines);
+
+
+
 
     const handleSubmit=() => {
         if(currentChat){
@@ -127,10 +223,73 @@ function AuthContextProvider({children}:any){
         }
     }
 
+    async function myAsyncFunction(mediaStream:MediaStream) {
+        if (myVideo.current) {
+            myVideo.current.srcObject=mediaStream;
+        } else {
+            // Attendez que myVideo.current soit défini
+            await new Promise(resolve => setTimeout(resolve, 100));
+            myAsyncFunction(mediaStream);
+        }
+    }
+    const callUser = async () => {
+        try {
+            const userToCall = usersOnlines.find((user: { _id: string }) => user._id === remoteUser?._id);
+
+             console.log("remoteUser: " + userToCall.peerId)
+            if (userToCall && !userToCall.peerId) {
+                return alert(`${userToCall.username} n'est pas connecté`);
+            }
+
+            const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            await myAsyncFunction(mediaStream)
+            setLocalMediaStream(mediaStream)
+           // myVideo.current.srcObject = mediaStream;
+            //console.log(localMediaStream)
+
+            const call = peer.current.call(userToCall.peerId, mediaStream);
+
+            call.on("stream", (remoteStream: any) => {
+                remoteVideo.current.srcObject = remoteStream;
+            });
+
+            socket.current.emit('callUser', { userToCall: remoteUser, from: currentUser });
+            router.push("/call")
+        } catch (error) {
+            console.log("Erreur lors de l'appel", error);
+            //alert("Une erreur est survenue lors de l'appel");s
+        }
+    };
+
+    const answerCall = async () => {
+        try {
+            const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            setLocalMediaStream(mediaStream);
+
+            // Répondez à l'appel en utilisant la connexion existante
+            peer.current.on("call", (call:any) => {
+                call.answer(mediaStream);
+                call.on("stream", (remoteStream:MediaStream) => {
+                    remoteVideo.current.srcObject = remoteStream;
+                });
+            });
+              await myAsyncFunction(mediaStream)
+            // Vous pouvez éventuellement ajouter du code ici pour gérer la visualisation de la vidéo à distance.
+
+            // Redirigez l'utilisateur vers la page d'appel
+            router.push("/call");
+        } catch (error) {
+            console.log("Erreur lors de la réponse à l'appel", error);
+            // Gérez les erreurs en conséquence
+        }
+    };
+
+
     return (
             <AuthContext.Provider value={{
                 token,setToken,currentUser ,setCurrentUser,remoteUser,setRemoteUser,messages,setMessages,
-                currentChat,setCurrentChat,usersOnlines,setUsersOnlines,handleSubmit,msg,setMsg
+                currentChat,setCurrentChat,usersOnlines,setUsersOnlines,handleSubmit,msg,setMsg,socket,localMediaStream,
+                callUser,myVideo,userCaller,    answerCall
             }}>
                 {children}
             </AuthContext.Provider>

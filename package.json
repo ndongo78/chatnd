@@ -12,6 +12,7 @@
     "axios": "^1.5.1",
     "jwt-decode": "^3.1.2",
     "next": "latest",
+    "peerjs": "^1.5.1",
     "react": "latest",
     "react-dom": "latest",
     "react-icons": "^4.11.0",
