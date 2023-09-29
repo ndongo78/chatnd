@@ -24,10 +24,13 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "autoprefixer": "latest",
+    "bufferutil": "^4.0.7",
     "eslint": "latest",
     "eslint-config-next": "latest",
     "postcss": "latest",
+    "supports-color": "^8.1.1",
     "tailwindcss": "latest",
-    "typescript": "latest"
+    "typescript": "latest",
+    "utf-8-validate": "^5.0.10"
   }
 }

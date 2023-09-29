@@ -2,7 +2,7 @@
 import {createContext, useContext, useEffect, useRef, useState} from "react";
 import { io } from 'socket.io-client';
 import {createMessages} from "@/utils";
-import Peer from 'peerjs';
+// import Peer from 'peerjs';
 import {useRouter} from "next/navigation";
 
 export type User ={
@@ -119,8 +119,11 @@ function AuthContextProvider({children}:any){
                     ],
                 },
             };
+            import('peerjs').then(({ default: Peer }) => {
+                peer.current = new Peer(peerOptions);
 
-            peer.current = new Peer(peerOptions);
+
+
 
             socket.current = io(SERVER);
 
@@ -181,6 +184,7 @@ function AuthContextProvider({children}:any){
                   }
                   console.log("callEvent",call)
                 })
+            });
         }
     }, [currentUser]);
 
