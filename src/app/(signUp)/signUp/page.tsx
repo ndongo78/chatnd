@@ -1,6 +1,6 @@
 "use client"
 import Link  from "next/link";
-import "@/styles/Login.scss";
+import "@/styles/login.scss";
 
 const Register = () => {
     const handleSubmit = () => {}

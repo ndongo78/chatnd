@@ -112,13 +112,8 @@ function AuthContextProvider({children}:any){
                     iceServers: [
                         {
                             urls: [
-                                'stun:iceserver.ndongodev.com:3478',
+                                process.env.NEXT_PUBLIC_STUN_URL,
                                 //"stun:stun.l.google.com:19302"
-                                // {
-                                //     urls: 'turn:iceserver.ndongodev.com:3478',
-                                //     username: 'ndongo',
-                                //     credential: 'a9125844',
-                                // },
                             ],
                         },
                     ],
