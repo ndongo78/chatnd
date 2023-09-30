@@ -5,7 +5,7 @@ import {ImPhoneHangUp} from 'react-icons/im'
 import "@/styles/video.scss"
 import {useRouter} from "next/navigation";
 function Page() {
-    const {remoteUser,myVideo,currentUser} = useAuth()
+    const {remoteUser,myVideo,currentUser,remoteVideo} = useAuth()
     const router=useRouter()
 
     useEffect(() => {
@@ -29,9 +29,9 @@ function Page() {
                         <video playsInline  ref={myVideo}  autoPlay className="video" />
 
                     </div>
-                    {/*<div className=''>*/}
-                    {/*    <video playsInline  ref={userVideo}  autoPlay className="video" />*/}
-                    {/*</div>*/}
+                    <div className=''>
+                        <video playsInline  ref={remoteVideo}  autoPlay className="video" />
+                    </div>
 
                 </div>
 

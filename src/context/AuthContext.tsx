@@ -43,6 +43,7 @@ const AuthContext=createContext<{
     myVideo: any
     userCaller: any
     answerCall: ()=>void
+    remoteVideo:any
 }>({
     token: "",
     setToken: (token:string) => {},
@@ -65,6 +66,7 @@ const AuthContext=createContext<{
     myVideo: null,
     userCaller: null,
     answerCall:()=>{},
+    remoteVideo: null
 });
 
 const SERVER:string | undefined |any =process.env.NEXT_PUBLIC_SERVER_URL
@@ -288,7 +290,7 @@ function AuthContextProvider({children}:any){
             <AuthContext.Provider value={{
                 token,setToken,currentUser ,setCurrentUser,remoteUser,setRemoteUser,messages,setMessages,
                 currentChat,setCurrentChat,usersOnlines,setUsersOnlines,handleSubmit,msg,setMsg,socket,localMediaStream,
-                callUser,myVideo,userCaller,    answerCall
+                callUser,myVideo,userCaller,    answerCall, remoteVideo
             }}>
                 {children}
             </AuthContext.Provider>
