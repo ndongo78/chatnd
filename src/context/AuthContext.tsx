@@ -246,7 +246,7 @@ function AuthContextProvider({children}:any){
         try {
             const userToCall = usersOnlines.find((user: { _id: string }) => user._id === remoteUser?._id);
 
-             console.log("remoteUser: " + userToCall.peerId)
+             // console.log("remoteUser: " + userToCall.peerId)
             if (userToCall && !userToCall.peerId) {
                 return alert(`${userToCall.username} n'est pas connecté`);
             }
@@ -275,14 +275,14 @@ function AuthContextProvider({children}:any){
         try {
             const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
             setLocalMediaStream(mediaStream);
-
+            await remoteAsyncFunction(mediaStream)
             // Répondez à l'appel en utilisant la connexion existante
             peer.current.on("call", (call:any) => {
                 call.answer(mediaStream);
                 call.on("stream",  (remoteStream:MediaStream) => {
-                    remoteAsyncFunction(mediaStream)
+                    //  remoteAsyncFunction(mediaStream)
                     // Mettez à jour la source de la vidéo à distance
-                   // remoteVideo.current.srcObject = remoteStream;
+                    remoteVideo.current.srcObject = remoteStream;
                     // if (remoteVideo.current) {
                     //
                     // } else {
