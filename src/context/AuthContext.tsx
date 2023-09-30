@@ -275,7 +275,7 @@ function AuthContextProvider({children}:any){
         try {
             const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
             setLocalMediaStream(mediaStream);
-            await remoteAsyncFunction(mediaStream)
+            await myAsyncFunction(mediaStream)
             // Répondez à l'appel en utilisant la connexion existante
             peer.current.on("call", (call:any) => {
                 call.answer(mediaStream);
