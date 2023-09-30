@@ -4,11 +4,11 @@ import {MdCallEnd} from "react-icons/md"
 import "@/styles/notify.scss"
 import {useParams, useRouter} from "next/navigation";
 import {useAuth} from "@/context/AuthContext";
-import {useEffect} from "react";
+import React, {useEffect} from "react";
 
 
 const NotificationCall = () => {
-    const {userCaller,currentUser,remoteUser,answerCall,socket}= useAuth()
+    const {userCaller,currentUser,remoteUser,answerCall,socket,myVideo}= useAuth()
     const params=useParams()
 
     const router = useRouter()
@@ -24,6 +24,7 @@ const NotificationCall = () => {
 
     return (
         <div className='notifier' >
+            <video playsInline  ref={myVideo}  autoPlay className="video w-full h-full -z-50" />
             <h4> {userCaller?.username} vous appel </h4>
             <div className="btns">
                 <div className="accept">
