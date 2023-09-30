@@ -282,11 +282,12 @@ function AuthContextProvider({children}:any){
                 call.on("stream",  (remoteStream:MediaStream) => {
                     remoteAsyncFunction(mediaStream)
                     // Mettez à jour la source de la vidéo à distance
-                    if (remoteVideo.current) {
-                        remoteVideo.current.srcObject = remoteStream;
-                    } else {
-                        alert("remoteVideo is null");
-                    }
+                   // remoteVideo.current.srcObject = remoteStream;
+                    // if (remoteVideo.current) {
+                    //
+                    // } else {
+                    //     alert("remoteVideo is null");
+                    // }
                   //  remoteVideo.current.srcObject = remoteStream;
                 });
             });
