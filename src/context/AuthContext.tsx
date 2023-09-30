@@ -233,6 +233,15 @@ function AuthContextProvider({children}:any){
             myAsyncFunction(mediaStream);
         }
     }
+    async function remoteAsyncFunction(mediaStream:MediaStream) {
+        if (remoteVideo.current) {
+            remoteVideo.current.srcObject=mediaStream;
+        } else {
+            // Attendez que myVideo.current soit défini
+            await new Promise(resolve => setTimeout(resolve, 100));
+            myAsyncFunction(mediaStream);
+        }
+    }
     const callUser = async () => {
         try {
             const userToCall = usersOnlines.find((user: { _id: string }) => user._id === remoteUser?._id);
@@ -270,8 +279,8 @@ function AuthContextProvider({children}:any){
             // Répondez à l'appel en utilisant la connexion existante
             peer.current.on("call", (call:any) => {
                 call.answer(mediaStream);
-                call.on("stream", async(remoteStream:MediaStream) => {
-                    await myAsyncFunction(mediaStream)
+                call.on("stream", async (remoteStream:MediaStream) => {
+                   await remoteAsyncFunction(mediaStream)
                     // Mettez à jour la source de la vidéo à distance
                     if (remoteVideo.current) {
                         remoteVideo.current.srcObject = remoteStream;
