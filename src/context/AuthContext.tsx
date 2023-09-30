@@ -182,7 +182,7 @@ function AuthContextProvider({children}:any){
                     console.log("call error", error);
                    return alert("Error calling")
                   }
-                  console.log("callEvent",call)
+                  console.log("callEvent some",call)
                 })
             });
         }
