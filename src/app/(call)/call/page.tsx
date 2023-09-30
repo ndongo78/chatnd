@@ -8,6 +8,8 @@ function Page() {
     const {remoteUser,myVideo,currentUser,remoteVideo} = useAuth()
     const router=useRouter()
 
+    console.log(remoteVideo)
+
     useEffect(() => {
        if(!currentUser){
            router.push("/")
