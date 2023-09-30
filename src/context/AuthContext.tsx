@@ -270,8 +270,9 @@ function AuthContextProvider({children}:any){
             // Répondez à l'appel en utilisant la connexion existante
             peer.current.on("call", (call:any) => {
                 call.answer(mediaStream);
-                call.on("stream", (remoteStream:MediaStream) => {
-                    remoteVideo.current.srcObject = remoteStream;
+                call.on("stream", async(remoteStream:MediaStream) => {
+                    await myAsyncFunction(mediaStream)
+                  //  remoteVideo.current.srcObject = remoteStream;
                 });
             });
               await myAsyncFunction(mediaStream)
