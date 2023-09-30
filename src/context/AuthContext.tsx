@@ -279,13 +279,13 @@ function AuthContextProvider({children}:any){
             // Répondez à l'appel en utilisant la connexion existante
             peer.current.on("call", (call:any) => {
                 call.answer(mediaStream);
-                call.on("stream", async (remoteStream:MediaStream) => {
-                   await remoteAsyncFunction(mediaStream)
+                call.on("stream",  (remoteStream:MediaStream) => {
+                    remoteAsyncFunction(mediaStream)
                     // Mettez à jour la source de la vidéo à distance
                     if (remoteVideo.current) {
                         remoteVideo.current.srcObject = remoteStream;
                     } else {
-                        console.error("remoteVideo is null");
+                        alert("remoteVideo is null");
                     }
                   //  remoteVideo.current.srcObject = remoteStream;
                 });
