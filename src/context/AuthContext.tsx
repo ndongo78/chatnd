@@ -260,6 +260,7 @@ function AuthContextProvider({children}:any){
             const call = peer.current.call(userToCall.peerId, mediaStream);
 
             call.on("stream", (remoteStream: any) => {
+                console.log("remoteStream: " + remoteVideo.current)
                 remoteVideo.current.srcObject = remoteStream;
             });
 
