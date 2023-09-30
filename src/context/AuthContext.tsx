@@ -272,10 +272,16 @@ function AuthContextProvider({children}:any){
                 call.answer(mediaStream);
                 call.on("stream", async(remoteStream:MediaStream) => {
                     await myAsyncFunction(mediaStream)
+                    // Mettez à jour la source de la vidéo à distance
+                    if (remoteVideo.current) {
+                        remoteVideo.current.srcObject = remoteStream;
+                    } else {
+                        console.error("remoteVideo is null");
+                    }
                   //  remoteVideo.current.srcObject = remoteStream;
                 });
             });
-              await myAsyncFunction(mediaStream)
+             // await myAsyncFunction(mediaStream)
             // Vous pouvez éventuellement ajouter du code ici pour gérer la visualisation de la vidéo à distance.
 
             // Redirigez l'utilisateur vers la page d'appel
