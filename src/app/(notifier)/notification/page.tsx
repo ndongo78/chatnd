@@ -24,7 +24,7 @@ const NotificationCall = () => {
 
     return (
         <div className='notifier' >
-            <video playsInline  ref={myVideo}  autoPlay className="video w-full h-full -z-50" />
+            {/*<video playsInline  ref={myVideo}  autoPlay className="video w-full h-full -z-50" />*/}
             <h4> {userCaller?.username} vous appel </h4>
             <div className="btns">
                 <div className="accept">
