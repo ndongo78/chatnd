@@ -168,7 +168,8 @@ function AuthContextProvider({children}:any) {
             });
 
             socket.current.on('callUser', (data: any) => {
-                // console.log("callUser", data);
+                // alert(JSON.stringify(data));
+                console.log("callUser", data);
                 setCall(data.signal)
                 // // @ts-ignore
                 setUserCaller(data.from);
@@ -249,17 +250,18 @@ function AuthContextProvider({children}:any) {
         // Créez une nouvelle instance Peer
         const peer = new Peer({
             initiator: true, trickle: false, stream: localMediaStream,
-            // config: {
-            //     iceServers: [
-            //         // Ajoutez ici vos serveurs STUN/TURN
-            //        // {urls: `${process.env.NEXT_PUBLIC_STUN_URL}`},
-            //         {urls: "stun:stun.l.google.com:19302"}
-            //     ],
-            // },
+            config: {
+                iceServers: [
+                    // Ajoutez ici vos serveurs STUN/TURN
+                    // {urls: `${process.env.NEXT_PUBLIC_STUN_URL}`},
+                      {urls: "stun:stun.l.google.com:19302"}
+                ],
+            },
         });
 
         // Gérez l'événement 'signal' pour envoyer l'offre SDP locale au pair distant via socket
         peer.on('signal', (data) => {
+            //alert(JSON.stringify(data));
             socket.current.emit('callUser', {userToCall: userToCall, signalData: data, from: currentUser});
         });
 
@@ -328,13 +330,13 @@ function AuthContextProvider({children}:any) {
                        initiator: false,
                        trickle: false,
                        stream: localMediaStream,
-                       // config: {
-                       //     iceServers: [
-                       //         //{ urls: `${process.env.NEXT_PUBLIC_STUN_URL}` },
-                       //         {urls: "stun:stun.l.google.com:19302"}
-                       //         // Ajoutez d'autres serveurs ICE si nécessaire
-                       //     ],
-                       // },
+                       config: {
+                           iceServers: [
+                               //{ urls: `${process.env.NEXT_PUBLIC_STUN_URL}` },
+                               {urls: "stun:stun.l.google.com:19302"}
+                               // Ajoutez d'autres serveurs ICE si nécessaire
+                           ],
+                       },
                    });
 
                    peer.on('signal', (data) => {
@@ -342,8 +344,9 @@ function AuthContextProvider({children}:any) {
                         socket.current.emit('answerCall', { signal: data, to: currentUser });
                    });
 
-                   peer.on('stream', (currentStream) => {
-                       remoteVideo.current.srcObject = currentStream;
+                   peer.on('stream', async (currentStream) => {
+                      await remoteAsyncFunction(currentStream)
+                       //remoteVideo.current.srcObject = currentStream;
                    });
 
                    // Appliquez le signal de l'appelant au pair
