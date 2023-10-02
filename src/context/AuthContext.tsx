@@ -2,10 +2,8 @@
 import {createContext, useContext, useEffect, useRef, useState} from "react";
 import { io } from 'socket.io-client';
 import {createMessages} from "@/utils";
-// import Peer from 'peerjs';
 import {useRouter} from "next/navigation";
 import Peer from 'simple-peer';
-import {log} from "util";
 export type User ={
     username:string,
     email:string,

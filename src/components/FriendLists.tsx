@@ -83,10 +83,16 @@ export const FriendLists=()=> {
     }, [token]);
 
     // useEffect(() => {
-    //    if(ref.current){
-    //        ref.current.style.background="yellow"
+    //    if(myVideo.current){
+    //        navigator.mediaDevices.getUserMedia({video: true, audio: true})
+    //            .then((mediaStream) => {
+    //                // console.log("currentStream",mediaStream)
+    //                //setLocalMediaStream(mediaStream);
+    //                // myVideo.current.srcObject = mediaStream;
+    //
+    //            }).catch(err => console.log("err: ", err));
     //    }
-    // }, [ref.current]);
+    // }, [myVideo]);
 
 
     const handleSelect=(userTo:any)=>{
